@@ -3,9 +3,11 @@ package com.krukovska.springdbcourse.persistence.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -29,8 +31,10 @@ public class Booking {
     private long amount;
 
     @Column(nullable = false, name = "booking_date")
-    private LocalDate bookingDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime bookingDate;
 
     @Column(nullable = false, name = "until_date")
-    private LocalDate untilDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime untilDate;
 }
