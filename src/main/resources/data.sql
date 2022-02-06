@@ -12,7 +12,7 @@ VALUES (1, 'Butter', '72% Butter', 'Roshen', 49.86, 2),
        (3, 'Shorts', 'Short shorts', 'Collins', 1000, 1);
 
 INSERT INTO storage_products(id, amount, product_id, storage_id)
-VALUES (1, 4, 1, 1),
+VALUES (1, 40, 1, 1),
        (2, 18, 1, 2),
        (3, 10, 2, 1),
        (4, 2, 2, 2),

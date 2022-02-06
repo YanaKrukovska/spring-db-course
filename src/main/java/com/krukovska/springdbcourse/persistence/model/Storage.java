@@ -1,5 +1,6 @@
 package com.krukovska.springdbcourse.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,6 @@ public class Storage {
 
     @OneToMany
     @JoinColumn(name = "storage_id")
+    @JsonIgnore
     private List<StorageProduct> storageProducts;
 }

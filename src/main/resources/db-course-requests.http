@@ -15,6 +15,26 @@ GET http://localhost:8080/api/group/all
 
 DELETE http://localhost:8080/api/group/2
 
+###
+
+GET http://localhost:8080/api/booking/all
+
+###
+
+POST http://localhost:8080/api/booking/
+Content-Type: application/json
+
+{
+  "storageProduct": {
+    "id": 1
+  },
+  "storage": {
+    "id": 1
+  },
+  "amount": 1,
+  "bookingDate": "2022-02-01T16:01:45",
+  "untilDate": "2022-02-08T16:01:45"
+}
 
 
 

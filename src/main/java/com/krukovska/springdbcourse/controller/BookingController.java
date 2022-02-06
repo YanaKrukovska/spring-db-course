@@ -1,10 +1,14 @@
 package com.krukovska.springdbcourse.controller;
 
+import com.krukovska.springdbcourse.persistence.model.Booking;
 import com.krukovska.springdbcourse.service.BookingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -18,4 +22,17 @@ public class BookingController {
         this.service = service;
     }
 
+    @PostMapping("/")
+    public ResponseEntity<Booking> create(@RequestBody Booking booking) {
+        Booking createdBooking = service.create(booking);
+        log.info("Created new booking {}", booking);
+        return new ResponseEntity<>(createdBooking, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/all")
+    public ResponseEntity<List<Booking>> findAll() {
+        List<Booking> bookings = service.findAll();
+        log.info("Found bookings, list size= {}", bookings.size());
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    }
 }
