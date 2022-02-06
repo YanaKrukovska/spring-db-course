@@ -22,4 +22,13 @@ public class OrderDetail {
 
     @Column
     private long amount;
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" +
+                "id=" + id +
+                ", storageProductId=" + storageProduct.getId() +
+                ", amount=" + amount +
+                '}';
+    }
 }
