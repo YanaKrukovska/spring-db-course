@@ -7,7 +7,8 @@ VALUES (1, 'Food', 'Ordinary food'),
        (2, 'Dairy', 'Products containing milk');
 
 INSERT INTO products(id, name, description, manufacturer, price, group_id)
-VALUES (1, 'Butter', '72% Butter', 'Roshen', 49.86, 2);
+VALUES (1, 'Butter', '72% Butter', 'Roshen', 49.86, 2),
+       (2, 'Chocolate Butter', 'Chocolate taste butter', 'Roshen', 53.20, 2);
 
 INSERT INTO storage_products(id, amount, product_id, storage_id)
 VALUES (1, 4, 1, 1),

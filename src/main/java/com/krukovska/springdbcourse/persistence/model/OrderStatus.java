@@ -1,4 +1,4 @@
-package com.krukovska.springdbcourse.model;
+package com.krukovska.springdbcourse.persistence.model;
 
 import lombok.AllArgsConstructor;
 

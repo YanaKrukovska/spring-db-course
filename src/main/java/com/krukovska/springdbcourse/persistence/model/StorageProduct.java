@@ -1,25 +1,24 @@
-package com.krukovska.springdbcourse.model;
+package com.krukovska.springdbcourse.persistence.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "bookings")
-public class Booking {
+@Entity(name = "storage_products")
+public class StorageProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "storage_product_id", nullable = false)
-    private StorageProduct storageProduct;
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "storage_id", nullable = false)
@@ -27,10 +26,4 @@ public class Booking {
 
     @Column
     private long amount;
-
-    @Column(nullable = false, name = "booking_date")
-    private LocalDate bookingDate;
-
-    @Column(nullable = false, name = "until_date")
-    private LocalDate untilDate;
 }
