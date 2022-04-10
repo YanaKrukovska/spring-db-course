@@ -1,6 +1,7 @@
 package com.krukovska.task3.service.impl;
 
 import com.krukovska.task3.model.Book;
+import com.krukovska.task3.model.Condition;
 import com.krukovska.task3.repository.BookRepository;
 import com.krukovska.task3.service.BookService;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> findByText(String input) {
         return repository.findByText(input.toLowerCase());
+    }
+
+    @Override
+    public List<Book> findByParameters(List<Condition> conditions) {
+        return null;
     }
 
 }

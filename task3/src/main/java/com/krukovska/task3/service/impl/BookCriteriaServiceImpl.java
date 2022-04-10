@@ -2,20 +2,22 @@ package com.krukovska.task3.service.impl;
 
 import com.krukovska.task3.model.Author;
 import com.krukovska.task3.model.Book;
+import com.krukovska.task3.model.Condition;
 import com.krukovska.task3.model.Genre;
 import com.krukovska.task3.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 
 @Service
 public class BookCriteriaServiceImpl implements BookService {
 
+    public static final String AND_LABEL = "and";
     private final EntityManager entityManager;
 
     @Autowired
@@ -149,6 +151,39 @@ public class BookCriteriaServiceImpl implements BookService {
                 .or(titlePredicate, fullNamePredicate, descriptionPredicate, publisherPredicate)).distinct(true);
 
         return entityManager.createQuery(textSearchCriteriaQuery).getResultList();
+    }
+
+    @Override
+    public List<Book> findByParameters(List<Condition> conditions) {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Book> query = cb.createQuery(Book.class);
+        Root<Book> root = query.from(Book.class);
+
+        List<Predicate> andPredicates = new LinkedList<>();
+        List<Predicate> orPredicates = new LinkedList<>();
+
+        for (Condition condition : conditions) {
+            Predicate predicate = cb.equal(root.get(condition.getFieldName()), condition.getValue());
+            if (AND_LABEL.equals(condition.getOperator())) {
+                andPredicates.add(predicate);
+            } else {
+                orPredicates.add(predicate);
+            }
+        }
+
+        if (!andPredicates.isEmpty() && orPredicates.isEmpty()) {
+            query.where(andPredicates.toArray(new Predicate[0]));
+        } else if (andPredicates.isEmpty() && !orPredicates.isEmpty()) {
+            query.where(cb.or(orPredicates.toArray(new Predicate[0])));
+        } else {
+            Predicate and = cb.and(andPredicates.toArray(new Predicate[0]));
+            Predicate or = cb.or(orPredicates.toArray(new Predicate[0]));
+            query.where(and, or);
+        }
+
+        return entityManager.createQuery(query).getResultList();
+
     }
 
 }
