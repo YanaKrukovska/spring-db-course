@@ -153,7 +153,6 @@ public class BookCriteriaServiceImpl implements BookService {
         return entityManager.createQuery(textSearchCriteriaQuery).getResultList();
     }
 
-    @Override
     public List<Book> findByParameters(List<Condition> conditions) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();

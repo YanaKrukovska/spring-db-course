@@ -78,9 +78,4 @@ public class BookServiceImpl implements BookService {
         return repository.findByText(input.toLowerCase());
     }
 
-    @Override
-    public List<Book> findByParameters(List<Condition> conditions) {
-        return null;
-    }
-
 }

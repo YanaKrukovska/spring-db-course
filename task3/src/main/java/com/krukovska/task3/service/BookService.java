@@ -1,7 +1,6 @@
 package com.krukovska.task3.service;
 
 import com.krukovska.task3.model.Book;
-import com.krukovska.task3.model.Condition;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,5 +31,4 @@ public interface BookService {
 
     List<Book> findByText(String input);
 
-    List<Book> findByParameters(List<Condition> conditions);
 }
