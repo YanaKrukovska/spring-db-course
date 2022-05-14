@@ -1,7 +1,6 @@
 package com.krukovska.task3.service.impl;
 
 import com.krukovska.task3.model.Book;
-import com.krukovska.task3.model.Condition;
 import com.krukovska.task3.repository.BookRepository;
 import com.krukovska.task3.service.BookService;
 import org.springframework.stereotype.Service;

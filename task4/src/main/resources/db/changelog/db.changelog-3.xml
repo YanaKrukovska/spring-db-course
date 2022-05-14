@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+    <changeSet id="2022050919005" author="Yana Krukovska">
+        <addColumn tableName="team">
+            <column name="series" type="varchar(255)"/>
+        </addColumn>
+        <sql>
+            update team set series = 'F1'
+        </sql>
+    </changeSet>
+</databaseChangeLog>

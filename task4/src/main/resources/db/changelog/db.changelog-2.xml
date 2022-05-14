@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+    <changeSet id="2022050919000" author="Yana Krukovska">
+        <insert tableName="team">
+            <column name="name" value="Renault"/>
+            <column name="country" value="France"/>
+        </insert>
+        <insert tableName="team">
+            <column name="name" value="Mercedes"/>
+            <column name="country" value="Germany"/>
+        </insert>
+        <insert tableName="team">
+            <column name="name" value="Williams"/>
+            <column name="country" value="UK"/>
+        </insert>
+        <insert tableName="driver">
+            <column name="full_name" value="Esteban Ocon"/>
+            <column name="country" value="France"/>
+            <column name="team_id" value="1"/>
+        </insert>
+        <insert tableName="driver">
+            <column name="full_name" value="Lewis Hamilton"/>
+            <column name="country" value="UK"/>
+            <column name="team_id" value="2"/>
+        </insert>
+        <insert tableName="driver">
+            <column name="full_name" value="George Russell"/>
+            <column name="country" value="UK"/>
+            <column name="team_id" value="3"/>
+        </insert>
+        <insert tableName="driver">
+            <column name="full_name" value="Fernando Alonso"/>
+            <column name="country" value="Spain"/>
+            <column name="team_id" value="1"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
