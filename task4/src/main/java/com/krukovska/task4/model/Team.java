@@ -12,6 +12,12 @@ import javax.persistence.*;
 @Entity(name = "team")
 public class Team {
 
+    public Team(String name, String country, String series) {
+        this.name = name;
+        this.country = country;
+        this.series = series;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -24,5 +30,6 @@ public class Team {
 
     @Column(name = "series")
     private String series;
+
 
 }

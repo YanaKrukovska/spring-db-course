@@ -12,6 +12,12 @@ import javax.persistence.*;
 @Entity(name = "driver")
 public class Driver {
 
+    public Driver(String fullName, String country, Team team) {
+        this.fullName = fullName;
+        this.country = country;
+        this.team = team;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

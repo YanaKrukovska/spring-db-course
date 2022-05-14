@@ -19,7 +19,27 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    public List<Driver> findAllByTeamCountry(String country) {
+        return repository.findAllByTeamCountry(country);
+    }
+
+    @Override
+    public List<Driver> findAllFromSameCountryAsTeam(String country) {
+        return repository.findAllByCountryAndTeamCountry(country, country);
+    }
+
+    @Override
     public List<Driver> findAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public Driver save(Driver driver) {
+        return repository.save(driver);
+    }
+
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
     }
 }

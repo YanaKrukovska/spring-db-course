@@ -19,6 +19,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public List<Team> findAllBySeriesContaining(String series) {
+        return repository.findAllBySeriesContaining(series);
+    }
+
+    @Override
     public List<Team> findAll() {
         return repository.findAll();
     }
@@ -26,5 +31,20 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team findById(long id) {
         return repository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Team save(Team team) {
+        return repository.save(team);
+    }
+
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
+    }
+
+    @Override
+    public Team findByName(String name) {
+        return repository.findByName(name);
     }
 }
