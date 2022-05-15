@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @TestPropertySource(locations = "classpath:application.properties")
-class LiquibaseTest {
+class LiquibaseITest {
 
     @Autowired
     private DriverService driverService;
