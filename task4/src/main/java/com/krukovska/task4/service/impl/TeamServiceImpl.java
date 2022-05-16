@@ -2,6 +2,7 @@ package com.krukovska.task4.service.impl;
 
 import com.krukovska.task4.model.Team;
 import com.krukovska.task4.repository.TeamRepository;
+import com.krukovska.task4.service.DriverService;
 import com.krukovska.task4.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,12 @@ import java.util.List;
 public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository repository;
+    private final DriverService driverService;
 
     @Autowired
-    public TeamServiceImpl(TeamRepository repository) {
+    public TeamServiceImpl(TeamRepository repository, DriverService driverService) {
         this.repository = repository;
+        this.driverService = driverService;
     }
 
     @Override

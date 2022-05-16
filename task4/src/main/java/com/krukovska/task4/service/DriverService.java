@@ -14,5 +14,15 @@ public interface DriverService {
 
     Driver save(Driver driver);
 
+    Driver saveRequiresNew(Driver driver);
+
+    Driver saveMandatory(Driver driver);
+
+    Driver saveNotSupported(Driver driver);
+
     void deleteAll();
+
+    Driver findByFullName(String fullName);
+
+    Driver saveSupports(Driver driver);
 }
