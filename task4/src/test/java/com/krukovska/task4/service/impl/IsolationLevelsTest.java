@@ -40,9 +40,6 @@ class IsolationLevelsTest {
     private DriverRepository driverRepository;
 
 
-
-
-
     @Nested
     @DisplayName("Tests for fantom read issue ")
     class FantomReadTest {
@@ -199,16 +196,27 @@ class IsolationLevelsTest {
 
             AtomicInteger doubledTotalSalary = new AtomicInteger(0);
 
-            Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 1500, ISOLATION_READ_COMMITTED, false));
+            Thread t1 = new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Driver driver = driverRepository.findByFullName(DRIVER);
+                driver.setSalary(1500);
+                driverRepository.save(driver);
+                System.out.println("Salary updated");
+            }
+            );
             Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_READ_COMMITTED)));
 
             t1.start();
             t2.start();
 
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             // 4000 + 4000  != 4000 + 4500
             Integer test = driverRepository.findAll().stream().map(Driver::getSalary).reduce(0, Integer::sum);
-
+            System.out.println("final salary value" + test);
             assertEquals(8500, doubledTotalSalary.get());
         }
 
