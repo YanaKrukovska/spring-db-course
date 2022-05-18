@@ -154,7 +154,6 @@ class IsolationLevelsTest {
             Map<String, Integer> dataAccum = new HashMap<>();
             dataAccum.put("Before", salaryService.getDriverSalary(DRIVER, ISOLATION_SERIALIZABLE));
 
-
             Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 2000, ISOLATION_SERIALIZABLE, true));
 
             Thread t2 = new Thread(() -> dataAccum.put("Middle", salaryService.getDriverSalary(DRIVER, ISOLATION_SERIALIZABLE)));
@@ -212,17 +211,17 @@ class IsolationLevelsTest {
             AtomicInteger doubledTotalSalary = new AtomicInteger(0);
 
             Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 1500, ISOLATION_READ_COMMITTED, false));
-            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_READ_COMMITTED)));
+            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(DRIVER, ISOLATION_READ_COMMITTED)));
 
             t1.start();
             t2.start();
 
             Thread.sleep(4000);
-            // 4000 + 4000  != 4000 + 4500
-            Integer test = driverRepository.findAll().stream().map(Driver::getSalary).reduce(0, Integer::sum);
+            // 1000 + 1000  != 1000 + 1500
+            Integer test = driverRepository.findByFullName(DRIVER).getSalary();
 
-            assertEquals(8500, doubledTotalSalary.get());
-            assertEquals(4500, test);
+            assertEquals(2500, doubledTotalSalary.get());
+            assertEquals(1500, test);
         }
 
         @Test
@@ -235,7 +234,7 @@ class IsolationLevelsTest {
                 salaryService.saveDriver(phantomDriver, ISOLATION_SERIALIZABLE);
 
             });
-            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_SERIALIZABLE)));
+            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(DRIVER, ISOLATION_SERIALIZABLE)));
 
             t1.start();
             t2.start();

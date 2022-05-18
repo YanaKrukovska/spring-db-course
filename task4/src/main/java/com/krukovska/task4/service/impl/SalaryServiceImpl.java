@@ -13,6 +13,7 @@ import static java.lang.Thread.sleep;
 
 @Service
 public class SalaryServiceImpl implements SalaryService {
+
     private final DriverRepository repository;
     private final PlatformTransactionManager transactionManager;
 
@@ -22,10 +23,8 @@ public class SalaryServiceImpl implements SalaryService {
         this.transactionManager = transactionManager;
     }
 
-
     @Override
     public int getDriverSalary(String fullName, int isolationLevel) {
-
         try {
             sleep(1000);
         } catch (InterruptedException e) {
@@ -35,11 +34,9 @@ public class SalaryServiceImpl implements SalaryService {
         DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         definition.setIsolationLevel(isolationLevel);
 
-
         TransactionStatus status = transactionManager.getTransaction(definition);
 
         Driver driver = repository.findByFullName(fullName);
-
 
         transactionManager.commit(status);
         return driver.getSalary();
@@ -47,11 +44,8 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public int getDoubledAllSalary(int isolationLevel) {
-
-
         DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         definition.setIsolationLevel(isolationLevel);
-
 
         TransactionStatus status = transactionManager.getTransaction(definition);
 
@@ -72,11 +66,8 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public int getDoubledAllSalary(String fullName, int isolationLevel) {
-
-
         DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         definition.setIsolationLevel(isolationLevel);
-
 
         TransactionStatus status = transactionManager.getTransaction(definition);
 
