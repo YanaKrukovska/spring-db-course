@@ -23,7 +23,7 @@ import static org.springframework.transaction.TransactionDefinition.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @TestPropertySource(locations = "classpath:application-h2.properties")
-class IsolationLevelslTest {
+class IsolationLevelsTest {
 
     public static final String DRIVER = "Yuki Tsunoda";
     @Autowired
@@ -39,22 +39,8 @@ class IsolationLevelslTest {
     @Autowired
     private DriverRepository driverRepository;
 
-    @BeforeEach
-    public void initializeDb() {
-        Team alphaTauri = createTeam("Alpha Tauri", "Italy", "F1");
-        Team mcLaren = createTeam("McLaren", "UK", "F1,Le Mans");
-        Team renault = createTeam("Renault", "France", "Le Mans,F1");
-        createDriver("Pierre Gasly", "France", alphaTauri, 1000);
-        createDriver("Daniel Ricciardo", "Australia", mcLaren, 1000);
-        createDriver("Esteban Ocon", "France", renault, 1000);
-        createDriver(DRIVER, "Japan", alphaTauri, 1000);
-    }
 
-    @AfterEach
-    public void clearDB() {
-        driverRepository.deleteAll();
-        teamRepository.deleteAll();
-    }
+
 
 
     @Nested
@@ -75,11 +61,10 @@ class IsolationLevelslTest {
             t1.start();
             t2.start();
 
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             // 8500 bc fantom driver is included
             assertEquals(8500, doubledTotalSalary.get());
         }
-
 
 
         @Test
@@ -97,7 +82,7 @@ class IsolationLevelslTest {
             t1.start();
             t2.start();
 
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             // 8500 bc fantom driver is included
             assertEquals(8500, doubledTotalSalary.get());
         }
@@ -117,7 +102,7 @@ class IsolationLevelslTest {
             t1.start();
             t2.start();
 
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             // 8000 bc fantom driver is NOT included
             assertEquals(8000, doubledTotalSalary.get());
         }
@@ -203,6 +188,88 @@ class IsolationLevelslTest {
             //commit rollback
             assertEquals(1000, dataAccum.get("After"));
         }
+    }
+
+    @Disabled
+    @Nested
+    @DisplayName("Tests for unrepeatable read issue ")
+    class UnrepeatableReadTest {
+        @Test
+        void unrepeatableReadDemo_ISOLATION_READ_COMMITTED() throws InterruptedException {
+
+            AtomicInteger doubledTotalSalary = new AtomicInteger(0);
+
+            Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 1500, ISOLATION_READ_COMMITTED, false));
+            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_READ_COMMITTED)));
+
+            t1.start();
+            t2.start();
+
+            Thread.sleep(3000);
+            // 4000 + 4000  != 4000 + 4500
+            Integer test = driverRepository.findAll().stream().map(Driver::getSalary).reduce(0, Integer::sum);
+
+            assertEquals(8500, doubledTotalSalary.get());
+        }
+
+
+        @Test
+        void unrepeatableReadDemo_ISOLATION_READ_UNCOMMITTED() throws InterruptedException {
+
+
+            AtomicInteger doubledTotalSalary = new AtomicInteger(0);
+
+            Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 1500, ISOLATION_READ_COMMITTED, false));
+            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_READ_COMMITTED)));
+
+            t1.start();
+            t2.start();
+
+            Thread.sleep(4000);
+            // 4000 + 4000  != 4000 + 4500
+            Integer test = driverRepository.findAll().stream().map(Driver::getSalary).reduce(0, Integer::sum);
+
+            assertEquals(8500, doubledTotalSalary.get());
+            assertEquals(4500, test);
+        }
+
+        @Test
+        void unrepeatableReadDemo_ISOLATION_SERIALIZABLE() throws InterruptedException {
+
+            AtomicInteger doubledTotalSalary = new AtomicInteger(0);
+
+            Thread t1 = new Thread(() -> {
+                Driver fantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
+                salaryService.saveDriver(fantomDriver, ISOLATION_SERIALIZABLE);
+
+            });
+            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_SERIALIZABLE)));
+
+            t1.start();
+            t2.start();
+
+            Thread.sleep(3000);
+            // 8000 bc fantom driver is NOT included
+            assertEquals(8000, doubledTotalSalary.get());
+        }
+
+    }
+
+    @BeforeEach
+    public void initializeDb() {
+        Team alphaTauri = createTeam("Alpha Tauri", "Italy", "F1");
+        Team mcLaren = createTeam("McLaren", "UK", "F1,Le Mans");
+        Team renault = createTeam("Renault", "France", "Le Mans,F1");
+        createDriver("Pierre Gasly", "France", alphaTauri, 1000);
+        createDriver("Daniel Ricciardo", "Australia", mcLaren, 1000);
+        createDriver("Esteban Ocon", "France", renault, 1000);
+        createDriver(DRIVER, "Japan", alphaTauri, 1000);
+    }
+
+    @AfterEach
+    public void clearDB() {
+        driverRepository.deleteAll();
+        teamRepository.deleteAll();
     }
 
 

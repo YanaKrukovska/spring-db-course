@@ -9,8 +9,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.util.List;
-
 import static java.lang.Thread.sleep;
 
 @Service
@@ -49,7 +47,7 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public int getDoubledAllSalary(int isolationLevel) {
-        
+
 
         DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         definition.setIsolationLevel(isolationLevel);
@@ -58,14 +56,15 @@ public class SalaryServiceImpl implements SalaryService {
         TransactionStatus status = transactionManager.getTransaction(definition);
 
         int firstSum = repository.findAll().stream().map(Driver::getSalary).reduce(0, Integer::sum);
+        System.out.println("First salary read:" + firstSum);
         try {
-            sleep(2000);
+            sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         int secondSum = repository.findAll().stream().map(Driver::getSalary).reduce(0, Integer::sum);
-
+        System.out.println("Second salary read:" + secondSum);
         transactionManager.commit(status);
 
         return firstSum + secondSum;
@@ -91,12 +90,8 @@ public class SalaryServiceImpl implements SalaryService {
 
 
         TransactionStatus status = transactionManager.getTransaction(definition);
-
-        Driver savedUser = repository.save(driver);;
-
+        Driver savedUser = repository.save(driver);
         transactionManager.commit(status);
-
-
         return savedUser;
     }
 
@@ -105,50 +100,25 @@ public class SalaryServiceImpl implements SalaryService {
 
         DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         definition.setIsolationLevel(t);
-
-
         TransactionStatus status = transactionManager.getTransaction(definition);
-
         Driver driver = repository.findByFullName(fullName);
         driver.setSalary(salary);
         repository.save(driver);
         status.flush();
 
-        try {
-            sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         if (rollback) {
+            try {
+                sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             transactionManager.rollback(status);
         } else {
             transactionManager.commit(status);
+            System.out.println("Driver salary updated:" + salary);
         }
 
         return salary;
     }
 
-    @Override
-    public boolean deleteDriver(String driverName, int isolation) {
-        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
-        definition.setIsolationLevel(isolation);
-
-
-        TransactionStatus status = transactionManager.getTransaction(definition);
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        repository.deleteByFullName(driverName);
-        transactionManager.commit(status);
-
-        return true;
-    }
-
-    @Override
-    public List<Driver> getDrivers() {
-        return repository.findAll();
-    }
 }
