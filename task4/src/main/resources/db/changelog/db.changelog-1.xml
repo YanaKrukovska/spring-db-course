@@ -23,6 +23,9 @@
             <column name="team_id" type="bigint">
                 <constraints nullable="true" uniqueConstraintName="driver_team_id_nn"/>
             </column>
+            <column name="salary" type="bigint">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addAutoIncrement tableName="team" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1"/>
         <addAutoIncrement tableName="driver" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1"/>

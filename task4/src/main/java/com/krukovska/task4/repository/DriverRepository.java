@@ -12,4 +12,6 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     List<Driver> findAllByTeamCountry(String country);
 
     List<Driver> findAllByCountryAndTeamCountry(String userCountry, String teamCountry);
+
+    boolean deleteByFullName(String driverName);
 }

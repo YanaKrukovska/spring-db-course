@@ -13,10 +13,15 @@ import javax.persistence.Entity;
 @Entity(name = "driver")
 public class Driver {
 
-    public Driver(String fullName, String country, Team team) {
+    public Driver(String fullName, String country, Team team, int salary) {
         this.fullName = fullName;
         this.country = country;
         this.team = team;
+        this.salary = salary;
+    }
+
+    public Driver(String fullName, String country, Team team) {
+        this(fullName, country, team, 0);
     }
 
     @Id
@@ -29,8 +34,12 @@ public class Driver {
     @Column(name = "country")
     private String country;
 
+    @Column(name = "salary")
+    private int salary;
+
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
+
 
 }
