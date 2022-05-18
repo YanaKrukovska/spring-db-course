@@ -193,16 +193,16 @@ class IsolationLevelsTest {
                 System.out.println("Salary updated");
             }
             );
-            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_READ_COMMITTED)));
+            Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(DRIVER, ISOLATION_READ_COMMITTED)));
 
             t1.start();
             t2.start();
 
             Thread.sleep(5000);
-            // 4000 + 4000  != 4000 + 4500
-            Integer test = driverRepository.findAll().stream().map(Driver::getSalary).reduce(0, Integer::sum);
+            // 1000 + 1000  != 1000 + 1500
+            Integer test = driverRepository.findByFullName(DRIVER).getSalary();
             System.out.println("final salary value" + test);
-            assertEquals(8500, doubledTotalSalary.get());
+            assertEquals(2500, doubledTotalSalary.get());
         }
 
 

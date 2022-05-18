@@ -2,12 +2,12 @@ package com.krukovska.task4.service;
 
 import com.krukovska.task4.model.Driver;
 
-import java.util.List;
-
 public interface SalaryService {
     int getDriverSalary(String fullName, int isolationLevel);
 
     int getDoubledAllSalary(int isolationLevel);
+
+    int getDoubledAllSalary(String fullName, int isolationLevel);
 
     int getDriverSalary(String driver);
 

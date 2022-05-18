@@ -71,6 +71,31 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
+    public int getDoubledAllSalary(String fullName, int isolationLevel) {
+
+
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setIsolationLevel(isolationLevel);
+
+
+        TransactionStatus status = transactionManager.getTransaction(definition);
+
+        int firstSum = repository.findByFullName(fullName).getSalary();
+        System.out.println("First salary read:" + firstSum);
+        try {
+            sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        int secondSum = repository.findByFullName(fullName).getSalary();
+        System.out.println("Second salary read:" + secondSum);
+        transactionManager.commit(status);
+
+        return firstSum + secondSum;
+    }
+
+    @Override
     public int getDriverSalary(String driver) {
         return repository.findByFullName(driver).getSalary();
     }
