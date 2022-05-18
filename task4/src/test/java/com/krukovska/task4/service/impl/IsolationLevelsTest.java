@@ -4,9 +4,7 @@ import com.krukovska.task4.model.Driver;
 import com.krukovska.task4.model.Team;
 import com.krukovska.task4.repository.DriverRepository;
 import com.krukovska.task4.repository.TeamRepository;
-import com.krukovska.task4.service.DriverService;
 import com.krukovska.task4.service.SalaryService;
-import com.krukovska.task4.service.TeamManagementService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.transaction.TransactionDefinition.*;
 
 @SpringBootTest
@@ -26,10 +24,6 @@ import static org.springframework.transaction.TransactionDefinition.*;
 class IsolationLevelsTest {
 
     public static final String DRIVER = "Yuki Tsunoda";
-    @Autowired
-    private TeamManagementService service;
-    @Autowired
-    private DriverService driverService;
 
     @Autowired
     private SalaryService salaryService;
@@ -41,16 +35,16 @@ class IsolationLevelsTest {
 
 
     @Nested
-    @DisplayName("Tests for fantom read issue ")
-    class FantomReadTest {
+    @DisplayName("Tests for phantom read issue ")
+    class PhantomReadTest {
         @Test
-        void fantomReadDemo_ISOLATION_READ_COMMITTED() throws InterruptedException {
+        void phantomReadDemo_ISOLATION_READ_COMMITTED() throws InterruptedException {
 
             AtomicInteger doubledTotalSalary = new AtomicInteger(0);
 
             Thread t1 = new Thread(() -> {
-                Driver fantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
-                salaryService.saveDriver(fantomDriver, ISOLATION_READ_COMMITTED);
+                Driver phantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
+                salaryService.saveDriver(phantomDriver, ISOLATION_READ_COMMITTED);
 
             });
             Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_READ_COMMITTED)));
@@ -59,19 +53,19 @@ class IsolationLevelsTest {
             t2.start();
 
             Thread.sleep(5000);
-            // 8500 bc fantom driver is included
+            // 8500 bc phantom driver is included
             assertEquals(8500, doubledTotalSalary.get());
         }
 
 
         @Test
-        void fantomReadDemo_ISOLATION_READ_UNCOMMITTED() throws InterruptedException {
+        void phantomReadDemo_ISOLATION_READ_UNCOMMITTED() throws InterruptedException {
 
             AtomicInteger doubledTotalSalary = new AtomicInteger(0);
 
             Thread t1 = new Thread(() -> {
-                Driver fantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
-                salaryService.saveDriver(fantomDriver, ISOLATION_READ_UNCOMMITTED);
+                Driver phantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
+                salaryService.saveDriver(phantomDriver, ISOLATION_READ_UNCOMMITTED);
 
             });
             Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_READ_UNCOMMITTED)));
@@ -80,18 +74,18 @@ class IsolationLevelsTest {
             t2.start();
 
             Thread.sleep(5000);
-            // 8500 bc fantom driver is included
+            // 8500 bc phantom driver is included
             assertEquals(8500, doubledTotalSalary.get());
         }
 
         @Test
-        void fantomReadDemo_ISOLATION_SERIALIZABLE() throws InterruptedException {
+        void phantomReadDemo_ISOLATION_SERIALIZABLE() throws InterruptedException {
 
             AtomicInteger doubledTotalSalary = new AtomicInteger(0);
 
             Thread t1 = new Thread(() -> {
-                Driver fantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
-                salaryService.saveDriver(fantomDriver, ISOLATION_SERIALIZABLE);
+                Driver phantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
+                salaryService.saveDriver(phantomDriver, ISOLATION_SERIALIZABLE);
 
             });
             Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_SERIALIZABLE)));
@@ -100,7 +94,7 @@ class IsolationLevelsTest {
             t2.start();
 
             Thread.sleep(5000);
-            // 8000 bc fantom driver is NOT included
+            // 8000 bc phantom driver is NOT included
             assertEquals(8000, doubledTotalSalary.get());
         }
 
@@ -117,10 +111,7 @@ class IsolationLevelsTest {
 
             Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 2000, ISOLATION_READ_UNCOMMITTED, true));
 
-            Thread t2 = new Thread(() -> {
-                dataAccum.put("Middle", salaryService.getDriverSalary(DRIVER, ISOLATION_READ_UNCOMMITTED));
-
-            });
+            Thread t2 = new Thread(() -> dataAccum.put("Middle", salaryService.getDriverSalary(DRIVER, ISOLATION_READ_UNCOMMITTED)));
 
             t1.start();
             t2.start();
@@ -143,10 +134,7 @@ class IsolationLevelsTest {
 
             Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 2000, ISOLATION_READ_COMMITTED, true));
 
-            Thread t2 = new Thread(() -> {
-                dataAccum.put("Middle", salaryService.getDriverSalary(DRIVER, ISOLATION_READ_COMMITTED));
-
-            });
+            Thread t2 = new Thread(() -> dataAccum.put("Middle", salaryService.getDriverSalary(DRIVER, ISOLATION_READ_COMMITTED)));
 
             t1.start();
             t2.start();
@@ -169,10 +157,7 @@ class IsolationLevelsTest {
 
             Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 2000, ISOLATION_SERIALIZABLE, true));
 
-            Thread t2 = new Thread(() -> {
-                dataAccum.put("Middle", salaryService.getDriverSalary(DRIVER, ISOLATION_SERIALIZABLE));
-
-            });
+            Thread t2 = new Thread(() -> dataAccum.put("Middle", salaryService.getDriverSalary(DRIVER, ISOLATION_SERIALIZABLE)));
             t1.start();
             t2.start();
 
@@ -224,7 +209,6 @@ class IsolationLevelsTest {
         @Test
         void unrepeatableReadDemo_ISOLATION_READ_UNCOMMITTED() throws InterruptedException {
 
-
             AtomicInteger doubledTotalSalary = new AtomicInteger(0);
 
             Thread t1 = new Thread(() -> salaryService.setDriverSalary(DRIVER, 1500, ISOLATION_READ_COMMITTED, false));
@@ -247,8 +231,8 @@ class IsolationLevelsTest {
             AtomicInteger doubledTotalSalary = new AtomicInteger(0);
 
             Thread t1 = new Thread(() -> {
-                Driver fantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
-                salaryService.saveDriver(fantomDriver, ISOLATION_SERIALIZABLE);
+                Driver phantomDriver = createDriver("FF", "Australia", teamRepository.findByName("Renault"), 500);
+                salaryService.saveDriver(phantomDriver, ISOLATION_SERIALIZABLE);
 
             });
             Thread t2 = new Thread(() -> doubledTotalSalary.set(salaryService.getDoubledAllSalary(ISOLATION_SERIALIZABLE)));
@@ -257,10 +241,9 @@ class IsolationLevelsTest {
             t2.start();
 
             Thread.sleep(3000);
-            // 8000 bc fantom driver is NOT included
+            // 8000 bc phantom driver is NOT included
             assertEquals(8000, doubledTotalSalary.get());
         }
-
     }
 
     @BeforeEach
@@ -283,10 +266,6 @@ class IsolationLevelsTest {
 
     private Team createTeam(String name, String country, String series) {
         return teamRepository.save(new Team(name, country, series));
-    }
-
-    private Driver createDriver(String fullName, String country, Team team) {
-        return driverRepository.save(new Driver(fullName, country, team, 0));
     }
 
     private Driver createDriver(String fullName, String country, Team team, int salary) {
